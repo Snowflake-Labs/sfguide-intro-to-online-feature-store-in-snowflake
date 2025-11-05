@@ -51,29 +51,13 @@ USE WAREHOUSE FS_DEMO_WH;
 USE DATABASE FEATURE_STORE_DEMO;
 USE SCHEMA TAXI_FEATURES;
 
--- Create stage for model assets
+-- Create stage for model assets with directory enabled
 CREATE OR REPLACE STAGE FS_DEMO_ASSETS
-    COMMENT = 'Stage for storing model assets';
+    DIRECTORY = (ENABLE = TRUE)
+    COMMENT = 'Stage for storing model assets and data files';
 
 -- ============================================================================
--- SECTION 3: EXTERNAL ACCESS INTEGRATION
--- ============================================================================
-
--- Create network rule to allow all external access (for PyPI, external APIs, etc.)
-CREATE OR REPLACE NETWORK RULE allow_all_rule
-    TYPE = 'HOST_PORT'
-    MODE = 'EGRESS'
-    VALUE_LIST = ('0.0.0.0:443', '0.0.0.0:80');
-
--- Create external access integration
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION allow_all_integration
-    ALLOWED_NETWORK_RULES = (allow_all_rule)
-    ENABLED = true;
-
-GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE FS_DEMO_ROLE;
-
--- ============================================================================
--- SECTION 4: GIT INTEGRATION FOR WORKSPACES
+-- SECTION 3: GIT INTEGRATION FOR WORKSPACES
 -- ============================================================================
 
 -- Create API integration with GitHub using Snowflake GitHub App
@@ -88,7 +72,7 @@ CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_FS_DEMO
     COMMENT = 'Git integration for Feature Store demo with GitHub App authentication';
 
 -- ============================================================================
--- SECTION 5: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
+-- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
 -- ============================================================================
 
 -- Create compute pool for SPCS model serving
