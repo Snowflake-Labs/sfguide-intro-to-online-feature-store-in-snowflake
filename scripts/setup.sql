@@ -22,6 +22,8 @@ GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT IMPORT SHARE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT CREATE ROLE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT MANAGE GRANTS ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SECTION 2: SWITCH TO ROLE AND CREATE RESOURCES
@@ -71,11 +73,8 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION allow_all_integration
 GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
--- SECTION 4: GIT INTEGRATION (requires ACCOUNTADMIN)
+-- SECTION 4: GIT INTEGRATION
 -- ============================================================================
-
--- Switch back to ACCOUNTADMIN to create API integration
-USE ROLE ACCOUNTADMIN;
 
 -- Create API integration with GitHub
 CREATE OR REPLACE API INTEGRATION git_api_integration
@@ -83,12 +82,6 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
     API_ALLOWED_PREFIXES = ('https://github.com/')
     ENABLED = true
     COMMENT = 'Git integration for Feature Store demo repository';
-
--- Grant usage to FS_DEMO_ROLE
-GRANT USAGE ON INTEGRATION git_api_integration TO ROLE FS_DEMO_ROLE;
-
--- Switch back to FS_DEMO_ROLE
-USE ROLE FS_DEMO_ROLE;
 
 -- Create Git repository integration
 CREATE OR REPLACE GIT REPOSITORY feature_store_demo_repo
