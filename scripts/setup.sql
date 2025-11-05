@@ -73,45 +73,22 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION allow_all_integration
 GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
--- SECTION 4: GIT INTEGRATION
+-- SECTION 4: GIT INTEGRATION FOR WORKSPACES
 -- ============================================================================
 
--- Create API integration with GitHub
+-- Create API integration with GitHub using Snowflake GitHub App
+-- This enables Git integration in Snowflake Workspaces
 CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_FS_DEMO
     API_PROVIDER = git_https_api
     API_ALLOWED_PREFIXES = ('https://github.com/')
-    ENABLED = true
-    COMMENT = 'Git integration for Feature Store demo repository';
-
--- Create Git repository integration
-CREATE OR REPLACE GIT REPOSITORY GITHUB_INTEGRATION_FS_DEMO
-    ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake.git'
-    API_INTEGRATION = 'GITHUB_INTEGRATION_FS_DEMO'
-    COMMENT = 'Feature Store demo GitHub repository';
-
--- Fetch the latest files from GitHub
-ALTER GIT REPOSITORY GITHUB_INTEGRATION_FS_DEMO FETCH;
+    API_USER_AUTHENTICATION = (
+        TYPE = snowflake_github_app
+    )
+    ENABLED = TRUE
+    COMMENT = 'Git integration for Feature Store demo with GitHub App authentication';
 
 -- ============================================================================
--- SECTION 5: CREATE NOTEBOOK FROM GIT REPOSITORY
--- ============================================================================
-
--- Create notebook from the Git repository
-CREATE OR REPLACE NOTEBOOK FEATURE_STORE_DEMO.TAXI_FEATURES.ONLINE_FEATURE_STORE_NOTEBOOK
-    FROM '@FEATURE_STORE_DEMO.TAXI_FEATURES.GITHUB_INTEGRATION_FS_DEMO/branches/main'
-    MAIN_FILE = 'notebooks/0_start_here.ipynb'
-    QUERY_WAREHOUSE = FS_DEMO_WH
-    RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME'
-    COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
-    IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600
-    COMMENT = 'Online Feature Store Demo Notebook';
-
--- Add live version and set external access
-ALTER NOTEBOOK FEATURE_STORE_DEMO.TAXI_FEATURES.ONLINE_FEATURE_STORE_NOTEBOOK ADD LIVE VERSION FROM LAST;
-ALTER NOTEBOOK FEATURE_STORE_DEMO.TAXI_FEATURES.ONLINE_FEATURE_STORE_NOTEBOOK SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration');
-
--- ============================================================================
--- SECTION 6: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
+-- SECTION 5: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
 -- ============================================================================
 
 -- Create compute pool for SPCS model serving
@@ -130,4 +107,3 @@ GRANT OPERATE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
 -- ============================================================================
 -- SETUP COMPLETE
 -- ============================================================================
-
