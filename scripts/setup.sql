@@ -77,20 +77,20 @@ GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE FS_DEMO_ROLE;
 -- ============================================================================
 
 -- Create API integration with GitHub
-CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_FS_DEMO
+CREATE OR REPLACE API INTEGRATION git_api_integration
     API_PROVIDER = git_https_api
     API_ALLOWED_PREFIXES = ('https://github.com/')
     ENABLED = true
     COMMENT = 'Git integration for Feature Store demo repository';
 
 -- Create Git repository integration
-CREATE OR REPLACE GIT REPOSITORY GITHUB_INTEGRATION_FS_DEMO
+CREATE OR REPLACE GIT REPOSITORY feature_store_demo_repo
     ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake.git'
-    API_INTEGRATION = 'GITHUB_INTEGRATION_FS_DEMO'
+    API_INTEGRATION = 'git_api_integration'
     COMMENT = 'Feature Store demo GitHub repository';
 
 -- Fetch the latest files from GitHub
-ALTER GIT REPOSITORY GITHUB_INTEGRATION_FS_DEMO FETCH;
+ALTER GIT REPOSITORY feature_store_demo_repo FETCH;
 
 -- ============================================================================
 -- SECTION 5: CREATE NOTEBOOK FROM GIT REPOSITORY
@@ -98,7 +98,7 @@ ALTER GIT REPOSITORY GITHUB_INTEGRATION_FS_DEMO FETCH;
 
 -- Create notebook from the Git repository
 CREATE OR REPLACE NOTEBOOK FEATURE_STORE_DEMO.TAXI_FEATURES.ONLINE_FEATURE_STORE_NOTEBOOK
-    FROM '@FEATURE_STORE_DEMO.TAXI_FEATURES.GITHUB_INTEGRATION_FS_DEMO/branches/main'
+    FROM '@FEATURE_STORE_DEMO.TAXI_FEATURES.feature_store_demo_repo/branches/main'
     MAIN_FILE = 'notebooks/0_start_here.ipynb'
     QUERY_WAREHOUSE = FS_DEMO_WH
     RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME'
