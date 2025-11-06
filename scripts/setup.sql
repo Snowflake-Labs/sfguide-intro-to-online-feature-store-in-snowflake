@@ -21,12 +21,9 @@ GRANT ROLE FS_DEMO_ROLE TO USER identifier($USERNAME);
 -- Grant account-level permissions
 GRANT CREATE DATABASE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT IMPORT SHARE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SECTION 2: SWITCH TO ROLE AND CREATE RESOURCES
@@ -60,22 +57,7 @@ CREATE OR REPLACE STAGE FS_DEMO_ASSETS
     COMMENT = 'Stage for storing model assets and data files';
 
 -- ============================================================================
--- SECTION 3: GIT INTEGRATION FOR WORKSPACES
--- ============================================================================
-
--- Create API integration with GitHub using Snowflake GitHub App
--- This enables Git integration in Snowflake Workspaces
-CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_FS_DEMO
-    API_PROVIDER = git_https_api
-    API_ALLOWED_PREFIXES = ('https://github.com/')
-    API_USER_AUTHENTICATION = (
-        TYPE = snowflake_github_app
-    )
-    ENABLED = TRUE
-    COMMENT = 'Git integration for Feature Store demo with GitHub App authentication';
-
--- ============================================================================
--- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
+-- SECTION 3: COMPUTE POOL FOR MODEL DEPLOYMENT
 -- ============================================================================
 
 -- Create compute pool for SPCS model serving
