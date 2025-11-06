@@ -7,6 +7,9 @@ USE ROLE ACCOUNTADMIN;
 SET USERNAME = (SELECT CURRENT_USER());
 SELECT $USERNAME;
 
+-- Set query tag for tracking
+ALTER SESSION SET QUERY_TAG = '{"origin":"sf_sit-is", "name":"sfguide_intro_to_online_feature_store", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
+
 -- ============================================================================
 -- SECTION 1: CREATE ROLE AND GRANT ACCOUNT-LEVEL PERMISSIONS
 -- ============================================================================
