@@ -14,10 +14,13 @@ SELECT $USERNAME;
 ALTER SESSION SET QUERY_TAG = '{"origin":"sf_sit-is", "name":"sfguide_intro_to_online_feature_store", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql", "action":"teardown"}}';
 
 -- ============================================================================
--- SECTION 1: DROP COMPUTE POOL
+-- SECTION 1: STOP SERVICES AND DROP COMPUTE POOL
 -- ============================================================================
 
 USE ROLE FS_DEMO_ROLE;
+
+-- Stop all services running in the compute pool
+ALTER COMPUTE POOL IF EXISTS trip_eta_prediction_pool STOP ALL;
 
 -- Drop compute pool (must be done before dropping the role)
 DROP COMPUTE POOL IF EXISTS trip_eta_prediction_pool;
